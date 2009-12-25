@@ -8,8 +8,13 @@ def version_too_high(pkg):
         print "installed version:", version_installed.VerStr
         print "all versions:"
         for v in version_all:
-            print " ", v.VerStr
+            print " ", v.VerStr, v.Downloadable
         print "downloadable:", version_installed.Downloadable
+        stop
+
+def downloadable(pkg):
+    version_installed = pkg.CurrentVer
+    return version_installed.Downloadable == 1
 
 def main():
     print "Init..."
@@ -23,10 +28,14 @@ def main():
     packages_all = sorted(cache.Packages, key=lambda pkg: pkg.Name)
     packages_installed = [pkg for pkg in packages_all \
             if pkg.CurrentState == apt_pkg.CurStateInstalled]
-    packages_downgrade = [pkg for pkg in packages_installed \
-            if version_too_high(pkg)]
+    packages_old = [pkg for pkg in packages_installed \
+            if not downloadable(pkg)]
+    #packages_downgrade = [pkg for pkg in packages_installed \
+    #        if version_too_high(pkg)]
     print "number of all packages:      ", len(packages_all)
     print "number of installed packages:", len(packages_installed)
+    for pkg in packages_old:
+        print pkg.Name
 
 
 if __name__ == "__main__":
