@@ -8,6 +8,12 @@ def version_too_high(pkg):
             return True
     return False
 
+def install_ver(pkg):
+    for v in pkg.VersionList:
+        if v.Downloadable:
+            return v.VerStr
+    raise ValueError("Sorry")
+
 def downloadable(pkg):
     version_installed = pkg.CurrentVer
     return version_installed.Downloadable == 1
@@ -30,9 +36,16 @@ def main():
             if version_too_high(pkg)]
     print "number of all packages:      ", len(packages_all)
     print "number of installed packages:", len(packages_installed)
-    print "packages for downgrade:"
+    print
+    print "List of packages do downgrade:"
     for pkg in packages_downgrade:
         print pkg.Name,
+    print
+    print
+    print "Command to downgrade the packages listed above:"
+    print "sudo aptitude install",
+    for pkg in packages_downgrade:
+        print "%s=%s" % (pkg.Name, install_ver(pkg)),
     print
 
 
