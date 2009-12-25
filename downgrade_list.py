@@ -3,14 +3,10 @@ import apt_pkg
 def version_too_high(pkg):
     version_installed = pkg.CurrentVer
     version_all = pkg.VersionList
-    if len(version_all) > 1:
-        print pkg.Name
-        print "installed version:", version_installed.VerStr
-        print "all versions:"
-        for v in version_all:
-            print " ", v.VerStr, v.Downloadable
-        print "downloadable:", version_installed.Downloadable
-        stop
+    for v in version_all:
+        if v.Downloadable and v.VerStr != version_installed.VerStr:
+            return True
+    return False
 
 def downloadable(pkg):
     version_installed = pkg.CurrentVer
@@ -30,12 +26,14 @@ def main():
             if pkg.CurrentState == apt_pkg.CurStateInstalled]
     packages_old = [pkg for pkg in packages_installed \
             if not downloadable(pkg)]
-    #packages_downgrade = [pkg for pkg in packages_installed \
-    #        if version_too_high(pkg)]
+    packages_downgrade = [pkg for pkg in packages_old \
+            if version_too_high(pkg)]
     print "number of all packages:      ", len(packages_all)
     print "number of installed packages:", len(packages_installed)
-    for pkg in packages_old:
-        print pkg.Name
+    print "packages for downgrade:"
+    for pkg in packages_downgrade:
+        print pkg.Name,
+    print
 
 
 if __name__ == "__main__":
