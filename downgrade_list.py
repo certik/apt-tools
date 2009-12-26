@@ -37,7 +37,12 @@ def main():
     print "number of all packages:      ", len(packages_all)
     print "number of installed packages:", len(packages_installed)
     print
-    print "List of packages do downgrade:"
+    print "List of unknown packages:"
+    for pkg in packages_old:
+        print pkg.Name,
+    print
+    print
+    print "List of packages to downgrade:"
     for pkg in packages_downgrade:
         print pkg.Name,
     print
